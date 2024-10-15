@@ -1,0 +1,125 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100svh;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 480px;
+  width: 100%;
+  padding: 16px;
+  border: 1px solid whitesmoke;
+}
+
+.team-names {
+  min-height: 50px;
+  display: flex;
+  justify-content: center;
+}
+
+.team-nos, .team-ellos {
+  width: 35%;
+  display: flex;
+  justify-content: center;
+}
+.team-nos {
+  border-right: 1px solid whitesmoke;
+}
+.team-ellos {
+  border-left: 1px solid whitesmoke;
+}
+.team-name {
+  padding: 15px;
+  width: 100%;
+  text-align: center;
+  font-size: larger;
+  font-weight: 600;
+}
+
+.team-points {
+  min-height: 492px;
+  margin-top: 16px;
+  border-top: 2px solid whitesmoke;
+  display: flex;
+  background: linear-gradient(to bottom, transparent 49.8%, rgba(245, 245, 245, 0.5) 49.8%, rgba(245, 245, 245, 0.5) 50.2%, transparent 50.2%);
+}
+
+.buttons-container {
+  display: flex;
+  flex-direction: column;
+  width: 15%;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+}
+
+.point-button {
+  width: 50px;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  background: none;
+  outline: 2px solid whitesmoke;
+  font-size: xx-large;
+}
+
+.points-container {
+  width: 35%;
+}
+
+.points-container.nos {
+  border-right: 1px solid whitesmoke;
+}
+
+.points-container.ellos {
+  border-left: 1px solid whitesmoke;
+}
+
+.five-point-box {
+  width: 35%;
+  aspect-ratio: 1/1;
+  margin: 20px auto 0 auto;
+  box-sizing: border-box;
+  border-radius: 3px;
+}
+.points-container :nth-child(4) {
+  margin: 40px auto 0 auto;
+}
+
+
+.left-stick {
+  border-left: 5px solid whitesmoke;
+}
+.top-stick {
+  border-top: 5px solid whitesmoke;
+}
+.right-stick {
+  border-right: 5px solid whitesmoke;
+}
+.bottom-stick {
+  border-bottom: 5px solid whitesmoke;
+}
+.center-stick {
+  background: linear-gradient(to bottom right, transparent 46.5%, whitesmoke 46.5%, whitesmoke 54.5%, transparent 54.5%);
+}
