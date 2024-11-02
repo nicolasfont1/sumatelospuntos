@@ -133,18 +133,19 @@ const nonCopiedURL = ref(false)
       </div>
     </section>
     <button class="share-button" @click="shareApp()">Compartir app</button>
-    <div v-if="copiedURL" class="copied-url">
-      <span>¡URL copiada!</span>
-      <span>Pegala donde quieras para compartir la app</span>
-    </div>
-    <div v-if="nonCopiedURL" class="copied-url">
-      <span>Algo salió mal</span>
-      <span>No se pudo copiar la URL</span>
-    </div>
   </main>
     <!-- Modal -->
-  <div v-if="winnerTeam.length" class="winner-modal-outside">
-    <div class="winner-modal-inside">
+  <div v-if="winnerTeam.length || copiedURL || nonCopiedURL" class="modal-outside">
+    <div v-if="copiedURL" class="modal-inside">
+      <span style="margin-bottom: 15px; font-size: 25px;">¡URL copiada!</span>
+      <span>Pegala donde quieras para</span>
+      <span>compartir la app</span>
+    </div>
+    <div v-if="nonCopiedURL" class="modal-inside">
+      <span style="margin-bottom: 15px; font-size: 25px;">Algo salió mal</span>
+      <span>No se pudo copiar la URL</span>
+    </div>
+    <div v-if="winnerTeam.length" class="modal-inside">
       <span style="font-size: 70px;">🏆</span>
       <span style="font-size: 30px;">Ganador</span>
       <span style="font-size: 50px; font-weight: 700;">{{ winnerTeam  }}</span>
