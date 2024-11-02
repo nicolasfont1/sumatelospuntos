@@ -12,12 +12,17 @@ const pointBox = {
 const nosPoints = ref([]);
 const ellosPoints = ref([]);
 
-const addPoint = (teamPointsObject) => {
+const winnerTeam = ref('')
+
+const addPoint = (teamPointsObject, teamName) => {
+  const lastBox = teamPointsObject[teamPointsObject.length - 1];
+  if (teamPointsObject.length === 6 && lastBox.center) {
+    return
+  }
+
   if (!teamPointsObject.length) {
     addNewBox(teamPointsObject)
   } else {
-    const lastBox = teamPointsObject[teamPointsObject.length - 1];
-
     if (!lastBox.top) {
       lastBox.top = true;
     } else if (!lastBox.right) {
@@ -25,6 +30,11 @@ const addPoint = (teamPointsObject) => {
     } else if (!lastBox.bottom) {
       lastBox.bottom = true;
     } else if (!lastBox.center) {
+      if (teamPointsObject.length === 6) {
+        lastBox.center = true;
+        winnerTeam.value = teamName;
+        return
+      };
       lastBox.center = true;
     } else {
       addNewBox(teamPointsObject);
@@ -60,38 +70,86 @@ const removeLastBox = (teamPointsObject) => {
   teamPointsObject.pop()
 };
 
+const reset = () => {
+  window.location.reload();
+};
+
+const shareApp = () => {
+  const URL = 'https://sumatelospuntos.vercel.app/'
+
+  navigator.clipboard.writeText(URL)
+    .then(() => {
+      if (copiedURL.value) return
+      copiedURL.value = true;
+      setTimeout(() => {
+        copiedURL.value = false;
+      }, 3000);
+    })
+    .catch(err => {
+      if (nonCopiedURL.value) return
+      nonCopiedURL.value = true;
+      setTimeout(() => {
+        nonCopiedURL.value = false;
+      }, 3000);
+    });
+};
+
+const copiedURL = ref(false)
+const nonCopiedURL = ref(false)
 </script>
 
 <template>
   <main class="main-container">
-    <div class="team-names">
-      <div class="team-nos">
-        <span class="team-name">NOS</span>
+    <section class="game-container">
+      <div class="team-names">
+        <div class="team-nos">
+          <span class="team-name">NOS</span>
+        </div>
+        <div class="team-ellos">
+          <span class="team-name">ELLOS</span>
+        </div>
       </div>
-      <div class="team-ellos">
-        <span class="team-name">ELLOS</span>
+      <div class="divider"></div>
+      <div class="team-points">
+        <div class="buttons-container">
+          <button class="point-button" @click="addPoint(nosPoints, 'NOS')">+</button>
+          <button class="point-button" @click="removePoint(nosPoints)">-</button>
+        </div>
+        <div class="points-container nos">
+          <div v-for="(fivePoints, index) in nosPoints" :key="index" class="five-point-box"
+            :class="{ 'left-stick': fivePoints.left, 'top-stick': fivePoints.top, 'right-stick': fivePoints.right, 'bottom-stick': fivePoints.bottom, 'center-stick': fivePoints.center }">
+          </div>
+        </div>
+        <!-- HALF TABLE -->
+        <div class="points-container ellos">
+          <div v-for="(fivePoints, index) in ellosPoints" :key="index" class="five-point-box"
+            :class="{ 'left-stick': fivePoints.left, 'top-stick': fivePoints.top, 'right-stick': fivePoints.right, 'bottom-stick': fivePoints.bottom, 'center-stick': fivePoints.center }">
+          </div>
+        </div>
+        <div class="buttons-container">
+          <button class="point-button" @click="addPoint(ellosPoints, 'ELLOS')">+</button>
+          <button class="point-button" @click="removePoint(ellosPoints)">-</button>
+        </div>
       </div>
+    </section>
+    <button class="share-button" @click="shareApp()">Compartir app</button>
+    <div v-if="copiedURL" class="copied-url">
+      <span>¡URL copiada!</span>
+      <span>Pegala donde quieras para compartir la app</span>
     </div>
-    <div class="team-points">
-      <div class="buttons-container">
-        <button class="point-button" @click="addPoint(nosPoints)">+</button>
-        <button class="point-button" @click="removePoint(nosPoints)">-</button>
-      </div>
-      <div class="points-container nos">
-        <div v-for="(fivePoints, index) in nosPoints" :key="index" class="five-point-box"
-          :class="{ 'left-stick': fivePoints.left, 'top-stick': fivePoints.top, 'right-stick': fivePoints.right, 'bottom-stick': fivePoints.bottom, 'center-stick': fivePoints.center }">
-        </div>
-      </div>
-      <!-- HALF TABLE -->
-      <div class="points-container ellos">
-        <div v-for="(fivePoints, index) in ellosPoints" :key="index" class="five-point-box"
-          :class="{ 'left-stick': fivePoints.left, 'top-stick': fivePoints.top, 'right-stick': fivePoints.right, 'bottom-stick': fivePoints.bottom, 'center-stick': fivePoints.center }">
-        </div>
-      </div>
-      <div class="buttons-container">
-        <button class="point-button" @click="addPoint(ellosPoints)">+</button>
-        <button class="point-button" @click="removePoint(ellosPoints)">-</button>
-      </div>
+    <div v-if="nonCopiedURL" class="copied-url">
+      <span>Algo salió mal</span>
+      <span>No se pudo copiar la URL</span>
     </div>
   </main>
+    <!-- Modal -->
+  <div v-if="winnerTeam.length" class="winner-modal-outside">
+    <div class="winner-modal-inside">
+      <span style="font-size: 70px;">🏆</span>
+      <span style="font-size: 30px;">Ganador</span>
+      <span style="font-size: 50px; font-weight: 700;">{{ winnerTeam  }}</span>
+      <button class="reset-button" @click="reset()">Reiniciar</button>
+      <button class="see-points-button" @click="winnerTeam = ''">Ver puntos</button>
+    </div>
+  </div>
 </template>
