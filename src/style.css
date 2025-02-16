@@ -1,3 +1,15 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  min-height: 100dvh;
+  -webkit-text-size-adjust: 100%;
+}
+
+* {
+  box-sizing: inherit;
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -11,13 +23,6 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-body {
-  min-height: 100svh;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
 }
 
 button {
@@ -51,6 +56,14 @@ button {
   background-color: whitesmoke
 }
 
+.team-point-counter {
+  padding: 15px 10px;
+  text-align: center;
+  font-size: larger;
+  font-weight: 600;
+  width: 10%;
+}
+
 .team-names {
   min-height: 50px;
   display: flex;
@@ -74,6 +87,20 @@ button {
   width: 100%;
   text-align: center;
   font-size: larger;
+  font-weight: 600;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.input-name {
+  border: none;
+  outline: none;
+  font-size: inherit;
+  width: 100%;
+  padding: 15px;
+  background-color: transparent;
+  color: whitesmoke;
   font-weight: 600;
 }
 
@@ -110,11 +137,13 @@ button {
 
 .points-container.nos {
   border-right: 1px solid whitesmoke;
+  border-left: 2px solid whitesmoke;
   margin-left: 16px;
 }
 
 .points-container.ellos {
   border-left: 1px solid whitesmoke;
+  border-right: 2px solid whitesmoke;
   margin-right: 16px;
 }
 

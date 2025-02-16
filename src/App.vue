@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, nextTick } from 'vue';
 
 const pointBox = {
   left: true,
@@ -10,7 +10,10 @@ const pointBox = {
 };
 
 const nosPoints = ref([]);
+const nosCounter = ref(0)
+
 const ellosPoints = ref([]);
+const ellosCounter = ref(0)
 
 const winnerTeam = ref('')
 
@@ -18,6 +21,12 @@ const addPoint = (teamPointsObject, teamName) => {
   const lastBox = teamPointsObject[teamPointsObject.length - 1];
   if (teamPointsObject.length === 6 && lastBox.center) {
     return
+  }
+
+  if (teamName === 'NOS') {
+    nosCounter.value ++
+  } else {
+    ellosCounter.value ++
   }
 
   if (!teamPointsObject.length) {
@@ -32,7 +41,7 @@ const addPoint = (teamPointsObject, teamName) => {
     } else if (!lastBox.center) {
       if (teamPointsObject.length === 6) {
         lastBox.center = true;
-        winnerTeam.value = teamName;
+        winnerTeam.value = teamName === 'NOS' ? (nosAlias.value || teamName) : (ellosAlias.value || teamName);
         return
       };
       lastBox.center = true;
@@ -46,11 +55,17 @@ const addNewBox = (teamPointsObject) => {
   teamPointsObject.push({ ...pointBox })
 };
 
-const removePoint = (teamPointsObject) => {
+const removePoint = (teamPointsObject, teamName) => {
   if (!teamPointsObject.length) {
     return
   } else {
     const lastBox = teamPointsObject[teamPointsObject.length - 1];
+
+    if (teamName === 'NOS') {
+      nosCounter.value --
+    } else {
+      ellosCounter.value --
+    }
 
     if (lastBox.center) {
       lastBox.center = false;
@@ -96,24 +111,51 @@ const shareApp = () => {
 
 const copiedURL = ref(false)
 const nonCopiedURL = ref(false)
+
+const editNos = ref(false);
+const inputNos = ref(null);
+const nosAlias = ref('');
+
+const editEllos = ref(false);
+const inputEllos = ref(null);
+const ellosAlias = ref('');
+
+const onInputFocus = (team) => {
+  if (team === 'nos') {
+    editNos.value = true;
+    nextTick(() => {
+      inputNos.value?.focus();
+    });
+  } else if (team === 'ellos') {
+    editEllos.value = true;
+    nextTick(() => {
+      inputEllos.value?.focus();
+    });
+  }
+};
+
 </script>
 
 <template>
   <main class="main-container">
     <section class="game-container">
       <div class="team-names">
+        <span class="team-point-counter">{{nosCounter}}</span>
         <div class="team-nos">
-          <span class="team-name">NOS</span>
+          <span v-if="!editNos" class="team-name" @click="onInputFocus('nos')">{{ nosAlias || 'NOS' }}</span>
+          <input v-else type="text" v-model="nosAlias" @blur="editNos = false" @keydown.enter="editNos = false" class="input-name" ref="inputNos">
         </div>
         <div class="team-ellos">
-          <span class="team-name">ELLOS</span>
+          <span v-if="!editEllos" class="team-name"  @click="onInputFocus('ellos')">{{ ellosAlias || 'ELLOS' }}</span>
+          <input v-else type="text" v-model="ellosAlias" @blur="editEllos = false" @keydown.enter="editEllos = false" class="input-name" ref="inputEllos">
         </div>
+        <span class="team-point-counter">{{ellosCounter}}</span>
       </div>
       <div class="divider"></div>
       <div class="team-points">
         <div class="buttons-container">
           <button class="point-button" @click="addPoint(nosPoints, 'NOS')">+</button>
-          <button class="point-button" @click="removePoint(nosPoints)">-</button>
+          <button class="point-button" @click="removePoint(nosPoints, 'NOS')">-</button>
         </div>
         <div class="points-container nos">
           <div v-for="(fivePoints, index) in nosPoints" :key="index" class="five-point-box"
@@ -128,7 +170,7 @@ const nonCopiedURL = ref(false)
         </div>
         <div class="buttons-container">
           <button class="point-button" @click="addPoint(ellosPoints, 'ELLOS')">+</button>
-          <button class="point-button" @click="removePoint(ellosPoints)">-</button>
+          <button class="point-button" @click="removePoint(ellosPoints, 'ELLOS')">-</button>
         </div>
       </div>
     </section>
