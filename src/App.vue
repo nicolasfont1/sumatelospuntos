@@ -1,5 +1,41 @@
 <script setup>
-import { ref, nextTick } from 'vue';
+import { ref, nextTick, onMounted } from 'vue';
+
+onMounted(() => {
+  const savedPoints = localStorage.getItem('savedPoints');
+  const savedTeamAliases = localStorage.getItem('savedAliases');
+
+  if (savedPoints) { loadSavedPoints(savedPoints); }
+  if (savedTeamAliases) { loadSavedAliases(savedTeamAliases); }
+})
+
+const loadSavedPoints = (savedPoints) => {
+  const pointsToLoad = JSON.parse(savedPoints);
+
+  for (let i = 0; i < pointsToLoad.nos; i++) {
+    addPoint(nosPoints.value, 'NOS');
+  };
+
+  for (let i = 0; i < pointsToLoad.ellos; i++) {
+    addPoint(ellosPoints.value, 'ELLOS');
+  };
+};
+
+const loadSavedAliases = (savedTeamAliases) => {
+  const aliasesToLoad = JSON.parse(savedTeamAliases);
+
+  nosAlias.value = aliasesToLoad.nos;
+  ellosAlias.value = aliasesToLoad.ellos;
+};
+
+const savePoints = (nosPoints, ellosPoints) => {
+  const matchPoints = {
+    nos: nosPoints,
+    ellos: ellosPoints
+  };
+
+  localStorage.setItem('savedPoints', JSON.stringify(matchPoints));
+};
 
 const pointBox = {
   left: true,
@@ -49,6 +85,8 @@ const addPoint = (teamPointsObject, teamName) => {
       addNewBox(teamPointsObject);
     }
   }
+
+  savePoints(nosCounter.value, ellosCounter.value);
 };
 
 const addNewBox = (teamPointsObject) => {
@@ -79,6 +117,8 @@ const removePoint = (teamPointsObject, teamName) => {
       removeLastBox(teamPointsObject)
     }
   }
+
+  savePoints(nosCounter.value, ellosCounter.value);
 };
 
 const removeLastBox = (teamPointsObject) => {
@@ -87,6 +127,7 @@ const removeLastBox = (teamPointsObject) => {
 
 const reset = () => {
   window.location.reload();
+  // Useless
 };
 
 const shareApp = () => {
@@ -134,6 +175,22 @@ const onInputFocus = (team) => {
   }
 };
 
+const saveAliases = (team) => {
+  // I need to make an object to access dinamically editNos or editEllos states
+  const editStates = {
+    nos: editNos,
+    ellos: editEllos
+  }
+
+  editStates[team].value = false;
+
+  const teamAliases = {
+    nos: nosAlias.value,
+    ellos: ellosAlias.value
+  }
+
+  localStorage.setItem('savedAliases', JSON.stringify(teamAliases));
+};
 </script>
 
 <template>
@@ -143,11 +200,11 @@ const onInputFocus = (team) => {
         <span class="team-point-counter">{{nosCounter}}</span>
         <div class="team-nos">
           <span v-if="!editNos" class="team-name" @click="onInputFocus('nos')">{{ nosAlias || 'NOS' }}</span>
-          <input v-else type="text" v-model="nosAlias" @blur="editNos = false" @keydown.enter="editNos = false" class="input-name" ref="inputNos">
+          <input v-else type="text" v-model="nosAlias" @blur="saveAliases('nos')" @keydown.enter="saveAliases('nos')" class="input-name" ref="inputNos">
         </div>
         <div class="team-ellos">
           <span v-if="!editEllos" class="team-name"  @click="onInputFocus('ellos')">{{ ellosAlias || 'ELLOS' }}</span>
-          <input v-else type="text" v-model="ellosAlias" @blur="editEllos = false" @keydown.enter="editEllos = false" class="input-name" ref="inputEllos">
+          <input v-else type="text" v-model="ellosAlias" @blur="saveAliases('ellos')" @keydown.enter="saveAliases('ellos')" class="input-name" ref="inputEllos">
         </div>
         <span class="team-point-counter">{{ellosCounter}}</span>
       </div>
