@@ -1,5 +1,6 @@
 <script setup>
 import { ref, nextTick, onMounted } from 'vue';
+import confetti from 'canvas-confetti';
 
 onMounted(() => {
   const savedPoints = localStorage.getItem('savedPoints');
@@ -78,6 +79,7 @@ const addPoint = (teamPointsObject, teamName) => {
       if (teamPointsObject.length === 6) {
         lastBox.center = true;
         winnerTeam.value = teamName === 'NOS' ? (nosAlias.value || teamName) : (ellosAlias.value || teamName);
+        throwConfetti();
         return
       };
       lastBox.center = true;
@@ -130,6 +132,7 @@ const reset = () => {
   nosCounter.value = 0;
   ellosPoints.value = [];
   ellosCounter.value = 0;
+  winnerTeam.value = '';
 
   savePoints(nosCounter.value, ellosCounter.value);
 };
@@ -195,6 +198,19 @@ const saveAliases = (team) => {
 
   localStorage.setItem('savedAliases', JSON.stringify(teamAliases));
 };
+
+const throwConfetti = () => {
+  confetti({
+    particleCount: 400,
+    spread: 50,
+    decay: 0.9,
+    gravity: .8,
+    origin: {
+      y: 0.7
+    },
+    ticks: 200
+  })
+}
 </script>
 
 <template>
@@ -204,11 +220,11 @@ const saveAliases = (team) => {
         <span class="team-point-counter">{{nosCounter}}</span>
         <div class="team-nos">
           <span v-if="!editNos" class="team-name" @click="onInputFocus('nos')">{{ nosAlias || 'NOS' }}</span>
-          <input v-else type="text" v-model="nosAlias" @blur="saveAliases('nos')" @keydown.enter="saveAliases('nos')" class="input-name" ref="inputNos">
+          <textarea v-else name="nosAliasTextArea" type="text" v-model="nosAlias" @blur="saveAliases('nos')" @keydown.enter="saveAliases('nos')" class="textarea-name" ref="inputNos"></textarea>
         </div>
         <div class="team-ellos">
           <span v-if="!editEllos" class="team-name"  @click="onInputFocus('ellos')">{{ ellosAlias || 'ELLOS' }}</span>
-          <input v-else type="text" v-model="ellosAlias" @blur="saveAliases('ellos')" @keydown.enter="saveAliases('ellos')" class="input-name" ref="inputEllos">
+          <textarea v-else name="ellosAliasTextArea" type="text" v-model="ellosAlias" @blur="saveAliases('ellos')" @keydown.enter="saveAliases('ellos')" class="textarea-name" ref="inputEllos"></textarea>
         </div>
         <span class="team-point-counter">{{ellosCounter}}</span>
       </div>
